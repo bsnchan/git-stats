@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
+	"text/tabwriter"
 
 	"github.com/bsnchan/git-stats/git"
 )
@@ -13,13 +15,20 @@ var repo string
 
 func main() {
 	g := git.NewClient(org, repo, token)
-	fmt.Println(g)
-	contributors, err := g.GetContributors()
+	contributors, err := g.GetContributorsDetailed()
 	if err != nil {
 		panic(err.Error())
 	}
 
-	fmt.Println(contributors)
+	w := new(tabwriter.Writer)
+	w.Init(os.Stdout, 8, 8, 0, '\t', 0)
+	defer w.Flush()
+
+	fmt.Fprintf(w, "\n %s\t%s\t%s\t%s\t%s\t", "LOGIN", "CONTRIBUTIONS", "EMAIL", "COMPANY", "ORGS")
+	for _, c := range contributors {
+		orgs := strings.Join(c.Orgs[:], ",")
+		fmt.Fprintf(w, "\n %s\t%d\t%s\t%s\t%s\t", c.Login, c.Contributions, c.Email, c.Company, orgs)
+	}
 }
 
 func init() {
