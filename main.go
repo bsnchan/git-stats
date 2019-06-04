@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"strings"
@@ -32,13 +33,9 @@ func main() {
 }
 
 func init() {
-	if token = os.Getenv("TOKEN"); token == "" {
-		panic("TOKEN must be specified")
-	}
-	if org = os.Getenv("ORG"); org == "" {
-		panic("ORG must be specified")
-	}
-	if repo = os.Getenv("REPO"); repo == "" {
-		panic("REPO must be specified")
-	}
+	flag.StringVar(&token, "token", "", "github token")
+	flag.StringVar(&org, "org", "", "github org")
+	flag.StringVar(&repo, "repo", "", "github repo")
+
+	flag.Parse()
 }
