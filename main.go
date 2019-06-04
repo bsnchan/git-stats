@@ -28,7 +28,7 @@ func main() {
 	fmt.Fprintf(w, "\n %s\t%s\t%s\t%s\t%s\t", "LOGIN", "CONTRIBUTIONS", "EMAIL", "COMPANY", "ORGS")
 	for _, c := range contributors {
 		orgs := strings.Join(c.Orgs[:], ",")
-		fmt.Fprintf(w, "\n %s\t%d\t%s\t%s\t%s\t", c.Login, c.Contributions, c.Email, c.Company, orgs)
+		fmt.Fprintf(w, "\n %s\t%d\t%s\t%s\t%s\t", c.Author.Login, c.Commits, c.Email, c.Company, orgs)
 	}
 }
 

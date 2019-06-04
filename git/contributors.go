@@ -7,12 +7,16 @@ import (
 )
 
 type Contributor struct {
-	Id            int
-	Login         string
-	Contributions int
-	Email         string
-	Company       string
-	Orgs          []string
+	Author  Author
+	Commits int `json:"total"`
+	Email   string
+	Company string
+	Orgs    []string
+}
+
+type Author struct {
+	Id    int
+	Login string
 }
 
 type User struct {
@@ -23,8 +27,8 @@ type User struct {
 }
 
 func (g *Client) GetContributors() ([]Contributor, error) {
-	contributorsEndpoint := fmt.Sprintf("/repos/%s/%s/contributors", g.Org, g.Repo)
-	resp, err := g.MakeRequest(contributorsEndpoint)
+	contributorStatsEndpoint := fmt.Sprintf("/repos/%s/%s/stats/contributors", g.Org, g.Repo)
+	resp, err := g.MakeRequest(contributorStatsEndpoint)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +49,7 @@ func (g *Client) GetContributorsDetailed() ([]Contributor, error) {
 	}
 
 	for i, c := range contributors {
-		usersEndpoint := fmt.Sprintf("/users/%s", c.Login)
+		usersEndpoint := fmt.Sprintf("/users/%s", c.Author.Login)
 		resp, err := g.MakeRequest(usersEndpoint)
 		if err != nil {
 			return nil, err
@@ -60,7 +64,7 @@ func (g *Client) GetContributorsDetailed() ([]Contributor, error) {
 		contributors[i].Email = user.Email
 		contributors[i].Company = user.Company
 
-		userOrgsEndpoint := fmt.Sprintf("/users/%s/orgs", c.Login)
+		userOrgsEndpoint := fmt.Sprintf("/users/%s/orgs", c.Author.Login)
 		resp, err = g.MakeRequest(userOrgsEndpoint)
 		if err != nil {
 			return nil, err
